@@ -32,6 +32,7 @@ def main():
 
 	print("We are in the {0} phase".format(mode), end="\n\n")
 
+	#CREATE THE MODEL
 	#initialize the CNN 
 	classifier = Sequential()
 	#Step 1 - Convolution
