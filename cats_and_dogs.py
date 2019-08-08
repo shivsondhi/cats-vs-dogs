@@ -99,7 +99,7 @@ def main():
 		classifier.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 		print("Model loaded and compiled!", end="\n\n")
 		# name of file to save as 
-		filepath = ("weightsFile1\\first_weights-contd_%d-{epoch:02d}-{loss:.4f}-{val_acc:.2f}.hdf5", epoch_done)
+		filepath = "weightsFile1\\first_weights-contd_%d-{epoch:02d}-{loss:.4f}-{val_acc:.2f}.hdf5" % epoch_done
 		#create model checkpoint
 		checkpoint = ModelCheckpoint(filepath, monitor='loss', save_best_only=True)
 		callbacks_list = [checkpoint] 
