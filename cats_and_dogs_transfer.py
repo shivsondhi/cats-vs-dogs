@@ -2,26 +2,24 @@
 Cats and Dogs - Image Classification using ResNet50 Transfer Learning.
 4000 training images of cats and dogs each + 1000 test images each.
 
-TRIAL 1 : 	125 steps/epoch + batch_size of 32	||	categorical_crossentropy + softmax
->			epoch = 1; 		loss	 = 0.1875;		acc 	= 0.9223
->			time: 117s;		val_loss = 0.0188; 		val_acc = 1.0000
+TRIAL 1 : 	125 steps/epoch + batch_size of 32 	|| 	binary_crossentropy + sigmoid, validation_steps = 32 with batch_size as well
+>			epoch = 1;		loss 	 = 0.1400;		acc 	= 0.9475
+>			time: 147s; 	val_loss = 0.0704;		val_acc = 0.9727
 >
->			epoch = 2;		loss 	 = 0.0821;		acc 	= 0.9677
->			time: 124s; 	val_loss = 0.0252;		val_acc = 1.0000
+>			epoch = 2;		loss 	 = 0.0920;		acc 	= 0.9652
+> 			time: 142s;		val_loss = 0.0791; 		val_acc = 0.9692
 >
->			epoch = 3; 		loss 	 = 0.0737; 		acc 	= 0.9725
->			time: 114s;		val_loss = 0.0145; 		val_acc = 1.0000
-
-TRIAL 2 : 	125 steps/epoch + batch_size of 32 	|| 	binary_crossentropy + sigmoid
->			epoch = 1;		loss 	 = 0.1475;		acc 	= 0.9373
->			time: 143s; 	val_loss = 0.0173;		val_acc = 1.0000
+>			eopch = 3;		loss  	 = 0.0681;		acc 	= 0.9740
+>			time: 144s;		val_loss = 0.0744;		val_acc = 0.9727
 >
->			epoch = 1;		loss 	 = 0.0750;		acc 	= 0.9698
-> 			time: 192s;		val_loss = 0.0036; 		val_acc = 1.0000
+>			eopch = 4;		loss  	 = 0.0787;		acc 	= 0.9695
+>			time: 147s;		val_loss = 0.0577;		val_acc = 0.9844
 >
->			eopch = 3;		loss  	 = 0.0580;		acc 	= 0.9760
->			time: 213s;		val_loss = 0.0057;		val_acc = 1.0000
-> 			total-time: 595.3s.
+>			eopch = 5;		loss  	 = 0.0695;		acc 	= 0.9702
+>			time: 141s;		val_loss = 0.0508;		val_acc = 0.9792
+>
+>			eopch = 6;		loss  	 = 0.0600;		acc 	= 0.9772
+>			time: 140s;		val_loss = 0.0452;		val_acc = 0.9844
 '''
 
 from keras.models import Sequential
@@ -33,8 +31,10 @@ import os
 import numpy as np
 
 def main():
-	modes = ['training', 'testing']
+	modes = ['training', 'retraining', 'testing', 'none']
 	mode = modes[0]
+	epoch_num = 3
+	epoch_done = 0
 
 	filepath = "dogs_vs_cats"
 	# Modify the savepath before each training run.
@@ -45,7 +45,7 @@ def main():
 	image_size = 224		# dimensions according to resnet model
 
 	#Create checkpoint details
-	checkpoint = ModelCheckpoint(savepath, monitor='loss', save_best_only=True)
+	checkpoint = ModelCheckpoint(savepath, monitor='val_loss', save_best_only=True)
 	callbacks_list = [checkpoint]
 
 	#Create model
@@ -64,16 +64,39 @@ def main():
 												  class_mode="categorical")
 	test_gen = img_generator.flow_from_directory(filepath+"\\test_set",
 												 target_size=(image_size, image_size),
+												 batch_size=32,
 												 class_mode="categorical")
 	if mode == 'training':
 		#Fit and train model
 		model.fit_generator(train_gen,
-							steps_per_epoch=125,
-							epochs=3,
+							steps_per_epoch=250,
+							epochs=epoch_num,
 							validation_data=test_gen,
-							validation_steps=1,
+							validation_steps=64,
 							callbacks=callbacks_list,
 							verbose=1)
+
+	elif mode == 'retraining':
+		epoch_num -= epoch_done
+		model.load_weights(loadpath)
+		model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+		print("Model loaded and compiled!", end="\n\n")
+
+		#change the name of file to save as 
+		savepath = "weightsFile2\\weights1-contd_%d-{epoch:02d}-{loss:.4f}-{val_acc:.2f}.hdf5" % epoch_done
+		#create model checkpoint
+		checkpoint = ModelCheckpoint(savepath, monitor='val_loss', save_best_only=True)
+		callbacks_list = [checkpoint]
+		 
+		# fit and train the model
+		model.fit_generator(train_gen,
+					steps_per_epoch = 250,
+					epochs = epoch_num,
+					validation_data = test_gen,
+					validation_steps = 64,
+					callbacks = callbacks_list,
+					verbose = 1)
+
 	elif mode == 'testing':
 		print("\nThe class indices are: ", train_gen.class_indices, end="\n\n")				# Displays which class (cat or dog) is represented by a 0 and which by 1
 		#Load model
