@@ -1,38 +1,33 @@
 # Cats vs Dogs
-A simple image classification task which predicts whether the image provided is that of a cat or a dog.
+A simple image classification task that predicts whether an image contains a cat or a dog.
 
-# Implementation Details
-The code is implemented using the keras library with tensorflow backend in python. 
-There are two files - one with its own neural network built from scratch and the other; which uses a pretrained, prebuilt model available in the keras framework. This method of using a pretrained model for your own task is called transfer learning.
-Both algorithms have three modes: training, testing and none. After each epoch, the model weights are saved to file so that at any point the model can be loaded at a particular state without training all over again.
+## Implementation Details
+There are two files - one uses a custom neural network built from scratch, and the other uses a pretrained model available in Keras. Using a pretrained model for your own task is called transfer learning. Both files have three modes - training, testing and none. Model weights are saved to file at the end of each epoch so the model can be loaded at a specific state without training all over again. `cats_and_dogs.py` contains the basic neural network and `cats_and_dogs_transfer.py` contains the transfer learned model. The model to transfer learn is ResNet50 pretrained with weights from the ImageNet challenge. 
 
-The `cats_and_dogs.py` file contains the basic neural network and the `cats_and_dogs_transfer.py` file contains the transfer learning algorithm. I have used the ResNet50 model pretrained with the weights used for the ImageNet challenge. 
+This project is meant as a beginner's exercise and impressive results was not the objective. Although I discuss ways to improve performance, there are better alternatives to the tools used here.
 
-# Background
 
-The classic cats v/s dogs problem is the "hello-world" of the image classification task. It is a very simple task in theory and for humans, but requires a considerable amount of training for a machine to achieve. After training we want the machine to be able to take an image as input and predict if it is an image of a cat or a dog. 
+## Background
 
-The three phases of the problem are:
+Cats v/s dogs is the "hello-world" of image classification. It is a simple task for humans, but requires training for a machine to achieve. The three phases of the problem are:
   a. Preprocessing
-  b. training
-  c. testing
+  b. Training
+  c. Testing
 
-In the preprocessing phase, we employ several techniques to transform the images - rescaling, zoom-range and horizontally flipping them to name a few. After this data augmentation is done, we must create the generator that will send images batch-wise to your algorithm during training.
+For preprocessing, we could resize or rescale the images. For data augmentation, we employ techniques like rescaling, zoom-range and horizontal flipping. A generator is created and it sends images batch-wise to your algorithm during training.
 
-In the training phase, the model is trained on the dataset of cats' and dogs' images. At the end of each epoch, the model weights are saved to file using the callbacks feature of keras. We use the fit_generator for training which accepts the images into memory in batches as opposed to bringing all the images into memory at once (by using fit). For re-training, an older weight file is loaded and the training continues from there.
+The model is trained on a dataset of cats and dogs images. At the end of each epoch model weights are saved to file using callbacks. The fit_generator, used for training images, accepts them in batches as opposed to adding all the images to memory (like while using fit). To re-train the model an older weight file can be loaded and training will continue from there.
 
-For the testing phase, you will want to go ahead and create a new folder in your working directory called "testImages". Add any photos of cats and dogs (or anything else really) to this new folder. Now in the testing phase we will go through every .jpg file in this directory and make a prediction on each of them iteratively.
+For testing, you can create a folder called `testImages` in your working directory. Add photos of cats and dogs (and other similar images) to `testImages`. While testing the model goes through every image file in `testImages` and makes a prediction iteratively.
 
-You can set the mode to none if you want to neither train nor test the model. This may be helpful if you only want to check the model summary and do nothing else. 
+If you set the mode to none if you only want to check the model summary and do nothing else. 
 
-ResNet is a model created by the team at Microsoft. The corresponding paper was the first to introduce the concept of residual networks (ResNet). The number that follows ResNet is usually the depth of the model i.e. the number of layers deep it is, therefore there are several variants of ResNet with different numbers at the end, including ResNet50. ImageNet is a dataset containing a few million high resolution images with all sorts of labels. The ResNet architecture won the ILSVRC competition in 2015 which uses a fraction of the ImageNet dataset for image related tasks. You can find more information about the ResNet model [here](https://medium.com/@14prakash/understanding-and-implementing-architectures-of-resnet-and-resnext-for-state-of-the-art-image-cf51669e1624) and on the ImageNet challenge [here](http://image-net.org/about-overview).
 
-# Dataset
-The dataset I used can be found [here](https://www.kaggle.com/chetankv/dogs-cats-images) (Kaggle). It contains 4000 training images each of cats and dogs; and 1000 testing images of each as well. Total training sample size is 8000 images and for testing is 2000 images.
+ResNet was created by Microsoft. The ResNet paper was the first to introduce the concept of residual networks (ResNet). The number that follows (i.e. the 50 in ResNet50) is the depth of the model - the number of layers it has. So, there are many versions of ResNet, with different numbers at the end. ResNet won the ILSVRC competition in 2015 which uses a fraction of the ImageNet dataset for image related tasks. You can find more information about the ResNet model [here](https://medium.com/@14prakash/understanding-and-implementing-architectures-of-resnet-and-resnext-for-state-of-the-art-image-cf51669e1624)
 
-# Results
-I ran the first model for 20 epochs and the transfered learning model for 6 epochs which took me a little under an hour each on my NVIDIA GeForce 940mx GPU (which is not all that powerful). The transfer learning model runs a little slower than the other file. This could be because of the depth of the ResNet model and also due to the target dimensions of the images in the respective files. 
+## Dataset
+ImageNet is a dataset containing a few million high resolution images with all sorts of labels. Find out more [here](http://image-net.org/about-overview). 
+The dataset I used for training is [here](https://www.kaggle.com/chetankv/dogs-cats-images) (Kaggle). It contains 4000 training images each of cats and dogs; and 1000 testing images of each. Total training sample size is 8000 images and testing sample is 2000 images.
 
-I have included a few results at the top of the cats_and_dogs.py file. Additionally, I have also added all the weight files in .hdf5 format. You might need a library to handle the hdf5 files; I use h5py which can be installed easily using 
-
-`pip install h5py`
+## Results
+I ran the first model for 20 epochs and the transfer learned model for 6 epochs. The transfer learned model ran a little slower which could be because of the depth of ResNet and also because of the target dimensions of the images in each file. 
