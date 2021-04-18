@@ -2,7 +2,7 @@
 A simple image classification task that predicts whether an image contains a cat or a dog.
 
 ## Implementation Details
-There are two files - one uses a custom neural network built from scratch, and the other uses a pretrained model available in Keras. Using a pretrained model for your own task is called transfer learning. Both files have three modes - training, testing and none. Model weights are saved to file at the end of each epoch so the model can be loaded at a specific state without training all over again. `cats_and_dogs.py` contains the basic neural network and `cats_and_dogs_transfer.py` contains the transfer learned model. The model to transfer learn is ResNet50 pretrained with weights from the ImageNet challenge. 
+There are two files - one uses a custom neural net built from scratch, and the other uses a pretrained model available in Keras. Using a pretrained model for your own task is called transfer learning. Both files have three modes - training, testing and none. Model weights are saved to file at the end of each epoch so the model can be loaded at a specific state without training all over again. `cats_and_dogs.py` contains the basic neural network and `cats_and_dogs_transfer.py` contains the transfer learned model. The model to transfer learn is ResNet50 pretrained with weights from the ImageNet challenge. 
 
 This project is meant as a beginner's exercise and impressive results was not the objective. Although I discuss ways to improve performance, there are better alternatives to the tools used here.
 
